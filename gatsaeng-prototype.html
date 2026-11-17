@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>갓생</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0D0F14;--s1:#161B27;--s2:#1E2537;
+  --gold:#FCBF49;--gold-d:rgba(252,191,73,.12);--gold-b:rgba(252,191,73,.3);
+  --blue:#5B8DEF;--mint:#2DD4A0;--pink:#F472B6;
+  --t1:#EAE6DF;--t2:#6B7A9C;--bd:rgba(255,255,255,.06);
+}
+body{
+  min-height:100vh;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%,#1a1600,#07080C 60%);
+  display:flex;justify-content:center;align-items:center;
+  font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color:var(--t1);padding:48px 20px;
+}
+.phone{
+  width:390px;height:844px;background:var(--bg);border-radius:52px;
+  position:relative;overflow:hidden;display:flex;flex-direction:column;
+  border:1.5px solid #1C2030;
+  box-shadow:0 0 0 1px #090A0D,0 70px 140px rgba(0,0,0,.85);
+}
+.island{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:124px;height:36px;background:#000;border-radius:20px;z-index:50}
+.sbar{height:56px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 10px;flex-shrink:0;position:relative;z-index:10}
+.sbar-time{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.sbar-icons{display:flex;align-items:center;gap:5px}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{display:none;height:100%;overflow-y:auto;scrollbar-width:none;padding-bottom:28px}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{display:block}
+.bnav{height:84px;background:var(--s1);border-top:1px solid var(--bd);display:flex;justify-content:space-around;align-items:flex-start;padding-top:11px;flex-shrink:0}
+.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 18px 0;background:none;border:none;opacity:.45;transition:opacity .15s;position:relative}
+.bnav-btn.active{opacity:1}
+.bnav-btn.active::before{content:'';position:absolute;top:-4px;width:18px;height:3px;background:var(--gold);border-radius:0 0 3px 3px}
+.bnav-ic{font-size:22px;line-height:1}
+.bnav-lbl{font-size:10px;font-weight:700;color:var(--t2);letter-spacing:.3px}
+.bnav-btn.active .bnav-lbl{color:var(--gold)}
+
+/* 66日 BAR */
+.day66-wrap{margin:10px 20px 0;background:var(--s1);border-radius:14px;padding:11px 14px}
+.d66-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.d66-label{font-size:10px;color:var(--t2);font-weight:700;letter-spacing:.5px}
+.d66-daynum{font-size:11px;font-weight:800;color:var(--gold)}
+.d66-track{height:7px;background:var(--s2);border-radius:3.5px;overflow:hidden}
+.d66-fill{height:100%;border-radius:3.5px;min-width:6px;background:linear-gradient(90deg,var(--gold),#FFA500);transition:width .6s ease}
+.d66-labels{display:flex;justify-content:space-between;margin-top:5px}
+.d66-pct{font-size:10px;color:var(--gold);font-weight:800}
+.d66-remain{font-size:10px;color:var(--t2);font-weight:500}
+
+/* ASSET BAR */
+.asset-card{margin:10px 20px 0;background:var(--s1);border-radius:14px;padding:11px 14px;cursor:pointer}
+.asset-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.asset-lbl{font-size:10px;color:var(--t2);font-weight:700;letter-spacing:.5px}
+.asset-goal{font-size:10px;color:var(--t2);font-weight:500}
+.asset-cur{display:flex;align-items:baseline;gap:3px;margin-bottom:7px}
+.asset-num{font-size:21px;font-weight:900;color:var(--mint);line-height:1}
+.asset-unit{font-size:11px;color:var(--t2);font-weight:500}
+.asset-track{height:7px;background:var(--s2);border-radius:3.5px;overflow:hidden}
+.asset-fill{height:100%;border-radius:3.5px;min-width:6px;background:linear-gradient(90deg,var(--mint),#00C896)}
+.asset-meta{display:flex;justify-content:space-between;margin-top:5px}
+.asset-pct{font-size:10px;color:var(--mint);font-weight:800}
+.asset-left{font-size:10px;color:var(--t2);font-weight:500}
+
+/* TODAY */
+.today-head{padding:16px 24px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.greet{font-size:12.5px;color:var(--t2);font-weight:500;margin-bottom:2px}
+.today-date{font-size:19px;font-weight:800}
+.lv-badge{display:flex;align-items:center;gap:5px;background:var(--gold-d);border:1px solid var(--gold-b);border-radius:20px;padding:5px 11px;margin-top:5px;cursor:default}
+.lv-txt{font-size:11px;font-weight:800;color:var(--gold)}
+.ring-section{display:flex;flex-direction:column;align-items:center;padding:20px 0 12px}
+.ring-wrap{position:relative;width:168px;height:168px}
+.ring-svg{width:168px;height:168px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--s1);stroke-width:14}
+.ring-fill{fill:none;stroke:var(--gold);stroke-width:14;stroke-linecap:round;stroke-dasharray:452;stroke-dashoffset:452;filter:drop-shadow(0 0 10px rgba(252,191,73,.55));transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-size:40px;font-weight:900;line-height:1;letter-spacing:-2px}
+.ring-label{font-size:10px;color:var(--t2);font-weight:600;margin-top:4px;letter-spacing:.6px}
+.ring-sub{font-size:13px;color:var(--t2);margin-top:11px;text-align:center}
+.ring-sub strong{color:var(--gold);font-weight:700}
+.strip{margin:14px 20px;background:var(--s1);border-radius:18px;padding:14px 0;display:flex;justify-content:space-around}
+.strip-item{text-align:center}
+.strip-num{font-size:20px;font-weight:900;line-height:1}
+.n-gold{color:var(--gold)}.n-mint{color:var(--mint)}.n-blue{color:var(--blue)}
+.strip-lbl{font-size:10px;color:var(--t2);font-weight:500;margin-top:3px}
+.strip-div{width:1px;background:var(--bd)}
+.sec-row{padding:14px 24px 10px;display:flex;justify-content:space-between;align-items:center}
+.sec-title{font-size:15px;font-weight:800}
+.sec-action{font-size:11px;color:var(--t2);font-weight:600;cursor:pointer}
+.hard-banner{margin:0 20px 2px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.2);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.hb-dot{width:8px;height:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 8px var(--pink);flex-shrink:0}
+.hb-text{font-size:11px;color:var(--pink);font-weight:700}
+.hb-sub{font-size:10px;color:rgba(244,114,182,.6);font-weight:500;margin-top:1px}
+.q-list{padding:0 20px;display:flex;flex-direction:column;gap:8px}
+.q-item{background:var(--s1);border-radius:16px;padding:11px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1px solid transparent;transition:border-color .2s;user-select:none}
+.q-item.done{border-color:rgba(45,212,160,.22);background:rgba(45,212,160,.03)}
+.q-item:active{opacity:.8}
+.q-chk{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:background .2s,border-color .2s}
+.q-item.done .q-chk{background:var(--mint);border-color:var(--mint)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.newly-done .q-chk{animation:pop .28s ease}
+.q-info{flex:1;min-width:0}
+.q-name{font-size:13.5px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-item.done .q-name{text-decoration:line-through;color:var(--t2);font-weight:500}
+.q-tags{display:flex;gap:5px;align-items:center}
+.qtag{font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px}
+.t-am{background:rgba(252,191,73,.12);color:var(--gold)}
+.t-bd{background:rgba(91,141,239,.12);color:var(--blue)}
+.t-mn{background:rgba(45,212,160,.12);color:var(--mint)}
+.t-pk{background:rgba(244,114,182,.12);color:var(--pink)}
+.q-xp{font-size:11px;font-weight:800;color:var(--gold);flex-shrink:0}
+.q-item.done .q-xp{color:var(--t2)}
+
+/* ROUTINE */
+.scr-head{padding:18px 24px 0}
+.scr-title{font-size:26px;font-weight:900;letter-spacing:-1px}
+.scr-sub{font-size:12px;color:var(--t2);font-weight:500;margin-top:3px}
+.chip-row{display:flex;gap:7px;padding:14px 20px 2px;overflow-x:auto;scrollbar-width:none}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{padding:7px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--s1);color:var(--t2);border:1px solid transparent;transition:all .15s;user-select:none}
+.chip.on{background:var(--gold-d);color:var(--gold);border-color:var(--gold-b)}
+.h-list{padding:12px 20px 0;display:flex;flex-direction:column;gap:9px}
+.h-card{background:var(--s1);border-radius:18px;padding:14px 15px;display:flex;align-items:center;gap:14px}
+.h-emoji{width:48px;height:48px;background:var(--s2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.h-info{flex:1;min-width:0}
+.h-name{font-size:14px;font-weight:800;margin-bottom:3px}
+.h-streak-txt{font-size:11px;color:var(--t2);font-weight:500;margin-bottom:6px}
+.h-streak-txt strong{color:var(--gold);font-weight:800}
+.h-dots{display:flex;gap:4px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--s2)}
+.dot.ok{background:var(--gold)}.dot.today{background:var(--blue);box-shadow:0 0 6px var(--blue)}.dot.miss{background:rgba(244,114,182,.35)}
+.h-right{text-align:right;flex-shrink:0}
+.h-xp{font-size:13px;font-weight:900;color:var(--gold)}
+.h-xp-lbl{font-size:9px;color:var(--t2);font-weight:500;margin-top:1px}
+.add-btn{margin:14px 20px 0;background:none;border:1.5px dashed rgba(107,122,156,.25);border-radius:16px;padding:14px;width:100%;cursor:pointer;color:var(--t2);font-size:13px;font-weight:700;font-family:inherit;transition:border-color .15s,color .15s}
+.add-btn:hover{border-color:var(--gold-b);color:var(--gold)}
+
+/* RECORD */
+.lv-card{margin:14px 20px;background:var(--gold-d);border:1px solid rgba(252,191,73,.22);border-radius:20px;padding:18px 20px}
+.lv-top-label{font-size:11px;color:var(--gold);font-weight:800;margin-bottom:3px;letter-spacing:.4px}
+.lv-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.lv-name{font-size:22px;font-weight:900}
+.lv-num{font-size:13px;color:var(--t2);font-weight:600}
+.lv-num strong{color:var(--gold);font-size:22px;font-weight:900;line-height:1}
+.xpbar-bg{height:6px;background:rgba(0,0,0,.35);border-radius:3px;overflow:hidden}
+.xpbar-fill{height:100%;background:linear-gradient(90deg,var(--gold),#FFA500);border-radius:3px;transition:width .6s ease}
+.xp-meta{display:flex;justify-content:space-between;margin-top:5px}
+.xp-cur{font-size:10px;color:var(--gold);font-weight:800}
+.xp-nxt{font-size:10px;color:var(--t2);font-weight:500}
+.wk-cards{margin:0 20px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wk-card{background:var(--s1);border-radius:16px;padding:14px 16px}
+.wk-num{font-size:26px;font-weight:900;line-height:1}
+.wk-lbl{font-size:10px;color:var(--t2);font-weight:500;margin-top:4px}
+.hmap-sec{padding:0 20px 16px}
+.hmap-label{font-size:14px;font-weight:800}
+.hmap-sub{font-size:10px;color:var(--t2);font-weight:500;margin-top:1px;margin-bottom:10px}
+.hmap-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:3.5px}
+.hcell{aspect-ratio:1;border-radius:3px;background:var(--s2)}
+.hcell.h1{background:rgba(252,191,73,.18)}.hcell.h2{background:rgba(252,191,73,.4)}
+.hcell.h3{background:rgba(252,191,73,.7)}.hcell.h4{background:var(--gold)}
+.bdg-grid{padding:4px 20px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bdg{display:flex;flex-direction:column;align-items:center;gap:5px}
+.bdg-ic{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--s1)}
+.bdg-ic.earned{background:var(--gold-d);border:1px solid rgba(252,191,73,.28)}
+.bdg-ic.locked{opacity:.2;filter:grayscale(1)}
+.bdg-nm{font-size:9px;color:var(--t2);text-align:center;font-weight:600;line-height:1.3}
+
+/* ME */
+.me-top{padding:20px 24px 0;display:flex;flex-direction:column;align-items:center;gap:9px}
+.me-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg,var(--gold),#FF8C00);display:flex;align-items:center;justify-content:center;font-size:36px;border:3px solid rgba(252,191,73,.35)}
+.me-name{font-size:20px;font-weight:900;letter-spacing:-.5px;cursor:pointer}
+.me-name:hover{color:var(--gold)}
+.me-tag{font-size:12px;color:var(--t2);font-weight:500}
+.me-stats{margin:18px 20px;background:var(--s1);border-radius:16px;display:flex;overflow:hidden}
+.ms{flex:1;padding:16px 8px;text-align:center;border-right:1px solid var(--bd)}
+.ms:last-child{border-right:none}
+.ms-num{font-size:21px;font-weight:900}
+.ms-lbl{font-size:9px;color:var(--t2);font-weight:600;margin-top:2px}
+.set-sec{padding:0 20px}
+.set-title{font-size:13px;font-weight:800;color:var(--t2);letter-spacing:.5px;margin-bottom:10px}
+.set-list{display:flex;flex-direction:column;gap:1.5px}
+.set-item{background:var(--s1);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .12s}
+.set-item:first-child{border-radius:16px 16px 0 0}.set-item:last-child{border-radius:0 0 16px 16px}
+.set-item:active{background:var(--s2)}
+.set-left{display:flex;align-items:center;gap:11px}
+.set-ic{width:32px;height:32px;background:var(--s2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.set-nm{font-size:13.5px;font-weight:600}
+.set-arr{font-size:16px;color:var(--t2)}
+.app-ver{padding:16px;text-align:center;font-size:11px;color:var(--t2)}
+.app-ver span{color:var(--gold);font-weight:700}
+
+/* MODAL SHEET */
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:30;display:none;align-items:flex-end}
+.modal-bg.open{display:flex}
+.modal-sheet{background:var(--s1);border-radius:24px 24px 0 0;width:100%;padding:20px 24px 32px;max-height:80%}
+.modal-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:16px}
+.modal-input{
+  width:100%;background:var(--s2);border:1.5px solid var(--bd);border-radius:14px;
+  padding:14px 16px;color:var(--t1);font-size:15px;font-family:inherit;
+  outline:none;transition:border-color .2s;
+}
+.modal-input:focus{border-color:var(--gold-b)}
+.modal-row{display:flex;gap:8px;margin-top:12px}
+.modal-btn{flex:1;padding:14px;border:none;border-radius:14px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+.modal-cancel{background:var(--s2);color:var(--t2)}
+.modal-confirm{background:var(--gold);color:#0D0F14}
+.modal-hint{font-size:11px;color:var(--t2);margin-top:8px}
+
+/* TOAST */
+.toast{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(45,212,160,.15);border:1px solid rgba(45,212,160,.3);
+  border-radius:20px;padding:9px 18px;font-size:12px;font-weight:700;color:var(--mint);
+  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:40;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* LEVELUP OVERLAY */
+.levelup-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.8);z-index:35;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+}
+.levelup-overlay.show{display:flex}
+@keyframes lu-pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.lu-emoji{font-size:72px;animation:lu-pop .5s ease both}
+.lu-title{font-size:28px;font-weight:900;color:var(--gold);text-align:center}
+.lu-sub{font-size:14px;color:var(--t2);text-align:center}
+.lu-btn{margin-top:8px;padding:14px 32px;background:var(--gold);color:#0D0F14;border:none;border-radius:16px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+
+/* ONBOARDING */
+.onboard{position:absolute;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;overflow:hidden;transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s}
+.onboard.hiding{transform:translateY(-844px);opacity:0}
+.ob-step{display:none;flex-direction:column;flex:1;overflow-y:auto;scrollbar-width:none;padding:60px 28px 32px}
+.ob-step::-webkit-scrollbar{display:none}
+.ob-step.active{display:flex}
+.ob-logo{font-size:64px;text-align:center;margin:12px 0 20px;line-height:1}
+.ob-hl{font-size:32px;font-weight:900;line-height:1.2;letter-spacing:-1.5px;margin-bottom:10px}
+.ob-body-txt{font-size:14px;color:var(--t2);font-weight:500;line-height:1.65;margin-bottom:20px}
+.ob-sp{display:flex;align-items:baseline;gap:7px;margin-bottom:16px}
+.ob-sp-num{font-size:30px;font-weight:900;color:var(--gold)}
+.ob-sp-txt{font-size:12px;color:var(--t2);font-weight:500}
+.ob-reviews{flex:1;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.ob-review{background:var(--s1);border-radius:14px;padding:11px 14px;font-size:12px;color:var(--t2);font-weight:500;line-height:1.5}
+.ob-review em{color:var(--t1);font-style:normal;font-weight:700}
+.ob-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.ob-back{font-size:26px;color:var(--t2);cursor:pointer;width:32px;display:flex;align-items:center;line-height:1;transition:color .15s}
+.ob-back:active{color:var(--t1)}
+.ob-dots{display:flex;gap:5px;align-items:center}
+.ob-dot{height:6px;width:6px;border-radius:3px;background:var(--s2);transition:width .3s,background .3s}
+.ob-dot.active{width:20px;background:var(--gold)}
+.ob-nav-space{width:32px}
+.ob-qnum{font-size:11px;color:var(--gold);font-weight:800;letter-spacing:.5px;margin-bottom:9px}
+.ob-hl.sm{font-size:26px;letter-spacing:-1px}
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;flex:1}
+.goal-card{background:var(--s1);border-radius:16px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none}
+.goal-card.on{background:var(--gold-d);border-color:var(--gold-b)}
+.gc-ic{font-size:28px}
+.gc-nm{font-size:11px;font-weight:700;text-align:center;color:var(--t1)}
+.goal-card.on .gc-nm{color:var(--gold)}
+.ob-qblk{margin-bottom:18px}
+.ob-qtxt{font-size:13px;font-weight:700;margin-bottom:8px}
+.ob-choices{display:flex;gap:7px}
+.ob-choice{flex:1;padding:9px 8px;background:var(--s1);border-radius:12px;font-size:11px;font-weight:700;color:var(--t2);text-align:center;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none;white-space:nowrap}
+.ob-choice.on{background:var(--gold-d);color:var(--gold);border-color:var(--gold-b)}
+.ob-load{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;padding-top:30px}
+.ob-load-ic{font-size:60px;line-height:1}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ob-load-ic{animation:float 2.4s ease-in-out infinite}
+.ob-load-title{font-size:22px;font-weight:900;text-align:center;line-height:1.3;letter-spacing:-.5px}
+.ldots{display:flex;gap:7px;margin-top:2px}
+.ldot{width:9px;height:9px;border-radius:50%;background:var(--gold)}
+@keyframes ldot{0%,80%,100%{transform:scale(.4);opacity:.3}40%{transform:scale(1);opacity:1}}
+.ldot{animation:ldot 1.5s ease-in-out infinite}
+.ldot:nth-child(2){animation-delay:.22s}.ldot:nth-child(3){animation-delay:.44s}
+.ob-load-steps{display:flex;flex-direction:column;gap:9px;align-self:stretch;padding:0 4px;margin-top:16px}
+.ls-item{font-size:13px;font-weight:600;color:var(--mint);transition:opacity .5s;display:flex;align-items:center;gap:8px}
+.ls-item::before{content:'✓';font-size:11px;width:20px;height:20px;border-radius:50%;background:rgba(45,212,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ob-res-top{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:16px}
+.ob-res-em{font-size:52px;margin-bottom:12px;line-height:1}
+.ob-plan-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.ob-plan-card{background:var(--s1);border-radius:14px;padding:14px 15px;display:flex;align-items:center;gap:14px}
+.opc-ic{font-size:26px;flex-shrink:0}
+.opc-nm{font-size:13px;font-weight:800;margin-bottom:2px}
+.opc-ds{font-size:11px;color:var(--t2);font-weight:500}
+.ob-66-promise{background:var(--gold-d);border:1px solid var(--gold-b);border-radius:14px;padding:13px 16px;margin-bottom:20px;text-align:center}
+.opp-label{font-size:10px;color:var(--t2);font-weight:600;margin-bottom:4px}
+.opp-txt{font-size:14px;font-weight:900;color:var(--gold)}
+.ob-btn{width:100%;padding:16px;border-radius:16px;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .15s;flex-shrink:0;margin-top:auto}
+.ob-btn:active{opacity:.85}
+.ob-btn-dark{background:var(--s1);color:var(--t1)}
+.ob-btn-gold{background:var(--gold);color:#0D0F14}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="island"></div>
+
+  <!-- ONBOARDING -->
+  <div id="onboard" class="onboard">
+    <div id="ob1" class="ob-step active">
+      <div class="ob-logo">🌟</div>
+      <div class="ob-hl">갓생,<br>오늘부터<br>시작해요</div>
+      <div class="ob-body-txt">66일간의 작은 습관이<br>당신의 삶을 완전히 바꿉니다</div>
+      <div class="ob-sp"><div class="ob-sp-num">150만+</div><div class="ob-sp-txt">명이 이미 갓생을 살고 있어요</div></div>
+      <div class="ob-reviews">
+        <div class="ob-review"><em>"3개월 만에 체중 8kg 감량"</em><br>— 이준혁 · 서울</div>
+        <div class="ob-review"><em>"연봉 협상 30% 올리고 목표 자산에 가까워졌어요"</em><br>— 박소연 · 부산</div>
+        <div class="ob-review"><em>"아침 6시 기상이 습관이 됐어요. 하루가 달라졌습니다"</em><br>— 김민수 · 대구</div>
+      </div>
+      <button class="ob-btn ob-btn-gold" onclick="obGo(2)">무료로 시작하기</button>
+    </div>
+    <div id="ob2" class="ob-step">
+      <div class="ob-nav"><div class="ob-back" onclick="obGo(1)">‹</div><div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div><div class="ob-nav-space"></div></div>
+      <div class="ob-qnum">1 / 3</div>
+      <div class="ob-hl sm">어떤 삶을<br>원하세요?</div>
+      <div class="ob-body-txt" style="margin-bottom:16px">원하는 목표를 모두 선택해 주세요</div>
+      <div class="goal-grid">
+        <div class="goal-card" onclick="toggleGoal(this)"><span class="gc-ic">💪</span><span class="gc-nm">신체 건강</span></div>
+        <div class="goal-card" onclick="toggleGoal(this)"><span class="gc-ic">💰</span><span class="gc-nm">재정 목표</span></div>
+        <div class="goal-card" onclick="toggleGoal(this)"><span class="gc-ic">📚</span><span class="gc-nm">자기계발</span></div>
+        <div class="goal-card" onclick="toggleGoal(this)"><span class="gc-ic">🧘</span><span class="gc-nm">정신 건강</span></div>
+        <div class="goal-card" onclick="toggleGoal(this)"><span class="gc-ic">💼</span><span class="gc-nm">커리어</span></div>
+        <div class="goal-card" onclick="toggleGoal(this)"><span class="gc-ic">🌱</span><span class="gc-nm">전반적 성장</span></div>
+      </div>
+      <button class="ob-btn ob-btn-dark" onclick="obGo(3)">다음</button>
+    </div>
+    <div id="ob3" class="ob-step">
+      <div class="ob-nav"><div class="ob-back" onclick="obGo(2)">‹</div><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div><div class="ob-nav-space"></div></div>
+      <div class="ob-qnum">2 / 3</div>
+      <div class="ob-hl sm">현재 생활<br>패턴을 알려주세요</div>
+      <div class="ob-body-txt" style="margin-bottom:20px">솔직하게 답할수록 더 정확한 플랜이 나와요</div>
+      <div class="ob-qblk"><div class="ob-qtxt">보통 몇 시에 일어나세요?</div><div class="ob-choices"><div class="ob-choice" onclick="pick(this)">6시 이전</div><div class="ob-choice" onclick="pick(this)">7–8시</div><div class="ob-choice" onclick="pick(this)">9시 이후</div></div></div>
+      <div class="ob-qblk"><div class="ob-qtxt">운동 빈도는 얼마나 돼요?</div><div class="ob-choices"><div class="ob-choice" onclick="pick(this)">거의 안 해요</div><div class="ob-choice" onclick="pick(this)">주 1–2회</div><div class="ob-choice" onclick="pick(this)">주 3회 이상</div></div></div>
+      <div class="ob-qblk"><div class="ob-qtxt">가장 개선하고 싶은 건?</div><div class="ob-choices"><div class="ob-choice" onclick="pick(this)">체력</div><div class="ob-choice" onclick="pick(this)">집중력</div><div class="ob-choice" onclick="pick(this)">돈 관리</div><div class="ob-choice" onclick="pick(this)">스트레스</div></div></div>
+      <button class="ob-btn ob-btn-dark" onclick="obGo(4)" style="margin-top:16px">다음</button>
+    </div>
+    <div id="ob4" class="ob-step">
+      <div class="ob-nav"><div class="ob-back" onclick="obGo(3)">‹</div><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div><div class="ob-nav-space"></div></div>
+      <div class="ob-load">
+        <div class="ob-load-ic">🔮</div>
+        <div class="ob-load-title">맞춤 플랜을<br>만들고 있어요</div>
+        <div class="ldots"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+        <div class="ob-load-steps">
+          <div class="ls-item">생활 패턴 분석 완료</div>
+          <div class="ls-item" id="ls2" style="opacity:0">최적 습관 조합 계산 중</div>
+          <div class="ls-item" id="ls3" style="opacity:0">맞춤 루틴 생성 완료</div>
+        </div>
+      </div>
+    </div>
+    <div id="ob5" class="ob-step">
+      <div class="ob-res-top"><div class="ob-res-em">🎉</div><div class="ob-hl sm">맞춤 플랜 완성!</div><div class="ob-body-txt">AI가 분석한 나만의 갓생 루틴이에요</div></div>
+      <div class="ob-plan-cards">
+        <div class="ob-plan-card"><span class="opc-ic">☀️</span><div><div class="opc-nm">미라클 모닝 루틴</div><div class="opc-ds">오전 6시 기상 · 15분 스트레칭</div></div></div>
+        <div class="ob-plan-card"><span class="opc-ic">💰</span><div><div class="opc-nm">재테크 습관</div><div class="opc-ds">매일 10분 가계부 · 목표 자산 트래킹</div></div></div>
+        <div class="ob-plan-card"><span class="opc-ic">💪</span><div><div class="opc-nm">체력 강화 루틴</div><div class="opc-ds">주 5회 30분 운동 · 단백질 보충</div></div></div>
+      </div>
+      <div class="ob-66-promise"><div class="opp-label">66일 후 당신은</div><div class="opp-txt">"습관이 자동으로 돌아가는 삶"</div></div>
+      <button class="ob-btn ob-btn-gold" onclick="startApp()">갓생 시작하기 🔥</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="sbar">
+    <span class="sbar-time" id="sbar-time">9:41</span>
+    <div class="sbar-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="4" width="3" height="8" rx="1"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1"/><rect x="9" y="1" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 9.5a1.4 1.4 0 110 2.8 1.4 1.4 0 010-2.8zm0-3.2c1.5 0 2.9.6 3.9 1.6l-1.4 1.4a3.2 3.2 0 00-5 0L4.1 7.9A5.3 5.3 0 018 6.3zm0-3.6c2.5 0 4.7 1 6.3 2.6L13 6.6a6.6 6.6 0 00-10 0L1.7 5.3A9.3 9.3 0 018 2.7z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y=".8" width="21.5" height="10.4" rx="2.4" stroke="currentColor" stroke-width="1.4" fill="none"/><rect x="21.9" y="3.5" width="2.1" height="5" rx="1.1"/><rect x="1.5" y="2.3" width="15" height="7.4" rx="1.2"/></svg>
+    </div>
+  </div>
+
+  <div class="screens">
+    <!-- 오늘 -->
+    <div id="s-today" class="screen active">
+      <div class="today-head">
+        <div>
+          <div class="greet" id="greet-txt">좋은 아침이에요 ☀️</div>
+          <div class="today-date" id="today-date">-</div>
+        </div>
+        <div class="lv-badge"><span>⭐</span><span class="lv-txt" id="lv-badge-txt">Lv.1 새싹</span></div>
+      </div>
+      <div class="day66-wrap">
+        <div class="d66-top"><span class="d66-label">갓생 챌린지 진행 중</span><span class="d66-daynum" id="d66-daynum">Day 1 / 66일</span></div>
+        <div class="d66-track"><div class="d66-fill" id="d66-fill" style="width:1.5%"></div></div>
+        <div class="d66-labels"><span class="d66-pct" id="d66-pct">1.5%</span><span class="d66-remain" id="d66-remain">65일 남음</span></div>
+      </div>
+      <div class="ring-section">
+        <div class="ring-wrap">
+          <svg class="ring-svg" viewBox="0 0 168 168"><circle class="ring-bg" cx="84" cy="84" r="72"/><circle class="ring-fill" id="ring-fill" cx="84" cy="84" r="72"/></svg>
+          <div class="ring-core"><div class="ring-pct" id="ring-pct">0%</div><div class="ring-label">갓생 지수</div></div>
+        </div>
+        <div class="ring-sub" id="ring-sub">오늘 미션 <strong>7개 중 0개</strong> 완료</div>
+      </div>
+      <div class="asset-card" onclick="openModal('asset')">
+        <div class="asset-top"><span class="asset-lbl">💰 목표 자산 트래킹</span><span class="asset-goal" id="asset-goal-txt">목표 100억</span></div>
+        <div class="asset-cur"><span class="asset-num" id="asset-cur-num">0</span><span class="asset-unit">억 현재</span></div>
+        <div class="asset-track"><div class="asset-fill" id="asset-fill" style="width:0%"></div></div>
+        <div class="asset-meta"><span class="asset-pct" id="asset-pct">0%</span><span class="asset-left" id="asset-left">탭해서 현재 자산 입력</span></div>
+      </div>
+      <div class="strip">
+        <div class="strip-item"><div class="strip-num n-gold" id="stat-streak">0</div><div class="strip-lbl">연속 일수</div></div>
+        <div class="strip-div"></div>
+        <div class="strip-item"><div class="strip-num n-mint" id="stat-done">0</div><div class="strip-lbl">오늘 완료</div></div>
+        <div class="strip-div"></div>
+        <div class="strip-item"><div class="strip-num n-blue" id="stat-xp">0</div><div class="strip-lbl">오늘 XP</div></div>
+      </div>
+      <div class="hard-banner" style="margin-top:10px" id="hard-banner" onclick="toggleHardMode()">
+        <div class="hb-dot"></div>
+        <div><div class="hb-text" id="hb-text">하드 모드 활성화 중</div><div class="hb-sub">오늘 미션 모두 완료 안 하면 연속 기록 초기화</div></div>
+      </div>
+      <div class="sec-row"><span class="sec-title">오늘의 미션</span><span class="sec-action" onclick="openModal('addQuest')">+ 추가</span></div>
+      <div class="q-list" id="q-list"></div>
+    </div>
+
+    <!-- 루틴 -->
+    <div id="s-routine" class="screen">
+      <div class="scr-head"><div class="scr-title">루틴 관리</div><div class="scr-sub" id="routine-sub">총 0개 습관</div></div>
+      <div class="chip-row">
+        <div class="chip on" onclick="fc(this,'전체')">전체</div>
+        <div class="chip" onclick="fc(this,'아침')">아침</div>
+        <div class="chip" onclick="fc(this,'신체')">신체</div>
+        <div class="chip" onclick="fc(this,'정신')">정신</div>
+        <div class="chip" onclick="fc(this,'공부')">공부</div>
+      </div>
+      <div class="h-list" id="h-list"></div>
+      <button class="add-btn" onclick="openModal('addRoutine')">＋ 새 루틴 추가하기</button>
+    </div>
+
+    <!-- 기록 -->
+    <div id="s-record" class="screen">
+      <div class="scr-head"><div class="scr-title">나의 성장</div></div>
+      <div class="lv-card">
+        <div class="lv-top-label">현재 레벨</div>
+        <div class="lv-row"><div class="lv-name" id="rec-lv-name">🌱 새싹</div><div class="lv-num">Lv.<strong id="rec-lv-num">1</strong></div></div>
+        <div class="xpbar-bg"><div class="xpbar-fill" id="xpbar-fill" style="width:0%"></div></div>
+        <div class="xp-meta"><span class="xp-cur" id="xp-cur-txt">0 XP</span><span class="xp-nxt" id="xp-nxt-txt">다음 레벨까지 200 XP</span></div>
+      </div>
+      <div style="padding:0 20px 16px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;align-items:center" id="lv-roadmap"></div>
+      <div class="wk-cards">
+        <div class="wk-card"><div class="wk-num n-gold" id="rec-streak">0</div><div class="wk-lbl">현재 연속 기록</div></div>
+        <div class="wk-card"><div class="wk-num" style="color:var(--mint)" id="rec-week-pct">0%</div><div class="wk-lbl">이번주 완료율</div></div>
+        <div class="wk-card"><div class="wk-num" style="color:var(--blue)" id="rec-total">0</div><div class="wk-lbl">총 완료 미션</div></div>
+        <div class="wk-card"><div class="wk-num" style="color:var(--pink)" id="rec-badges">0개</div><div class="wk-lbl">획득한 배지</div></div>
+      </div>
+      <div class="hmap-sec">
+        <div class="hmap-label">달성 기록</div>
+        <div class="hmap-sub">최근 91일</div>
+        <div class="hmap-grid" id="heatmap"></div>
+      </div>
+      <div class="sec-row"><span class="sec-title">배지 컬렉션</span></div>
+      <div class="bdg-grid" id="bdg-grid"></div>
+    </div>
+
+    <!-- 나 -->
+    <div id="s-me" class="screen">
+      <div class="me-top">
+        <div class="me-av">🧑</div>
+        <div class="me-name" id="me-name" onclick="openModal('name')" title="탭해서 이름 변경">김민준 ✏️</div>
+        <div class="me-tag" id="me-tag">Lv.1 새싹 · 갓생 1일째</div>
+      </div>
+      <div class="me-stats">
+        <div class="ms"><div class="ms-num" style="color:var(--gold)" id="me-total">0</div><div class="ms-lbl">완료 미션</div></div>
+        <div class="ms"><div class="ms-num" style="color:var(--mint)" id="me-streak">0</div><div class="ms-lbl">연속 일수</div></div>
+        <div class="ms"><div class="ms-num" style="color:var(--blue)" id="me-badges">0</div><div class="ms-lbl">획득 배지</div></div>
+      </div>
+      <div class="set-sec">
+        <div class="set-title">설정</div>
+        <div class="set-list">
+          <div class="set-item" onclick="openModal('name')"><div class="set-left"><div class="set-ic">✏️</div><div class="set-nm">이름 변경</div></div><span class="set-arr">›</span></div>
+          <div class="set-item" onclick="toggleHardMode()"><div class="set-left"><div class="set-ic" style="background:rgba(244,114,182,.15)">🌙</div><div class="set-nm" id="hardmode-setting-nm" style="color:var(--pink)">하드 모드 켜짐</div></div><span class="set-arr">›</span></div>
+          <div class="set-item" onclick="openModal('asset')"><div class="set-left"><div class="set-ic">💰</div><div class="set-nm">목표 자산 수정</div></div><span class="set-arr">›</span></div>
+          <div class="set-item" onclick="exportData()"><div class="set-left"><div class="set-ic">📤</div><div class="set-nm">데이터 내보내기</div></div><span class="set-arr">›</span></div>
+          <div class="set-item" onclick="resetConfirm()"><div class="set-left"><div class="set-ic">🔄</div><div class="set-nm" style="color:var(--pink)">데이터 초기화</div></div><span class="set-arr">›</span></div>
+        </div>
+      </div>
+      <div class="app-ver">갓생 v1.0.0 · <span>로컬 저장 중</span></div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <button class="bnav-btn active" onclick="tab('today',this)"><span class="bnav-ic">☀️</span><span class="bnav-lbl">오늘</span></button>
+    <button class="bnav-btn" onclick="tab('routine',this)"><span class="bnav-ic">📋</span><span class="bnav-lbl">루틴</span></button>
+    <button class="bnav-btn" onclick="tab('record',this)"><span class="bnav-ic">📈</span><span class="bnav-lbl">기록</span></button>
+    <button class="bnav-btn" onclick="tab('me',this)"><span class="bnav-ic">👤</span><span class="bnav-lbl">나</span></button>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
+    <div class="modal-sheet" id="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-title">-</div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- LEVEL UP OVERLAY -->
+  <div class="levelup-overlay" id="lu-overlay">
+    <div class="lu-emoji" id="lu-emoji">⭐</div>
+    <div class="lu-title" id="lu-title">레벨 업!</div>
+    <div class="lu-sub" id="lu-sub">새로운 칭호를 획득했어요</div>
+    <button class="lu-btn" onclick="closeLevelUp()">확인</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════
+   DATA MODEL & STORAGE
+═══════════════════════════════ */
+const KEY = 'gatsaeng_v1';
+const LEVELS = [
+  {name:'새싹',icon:'🌱',xp:0},
+  {name:'입문자',icon:'🌿',xp:200},
+  {name:'도전자',icon:'🌟',xp:600},
+  {name:'꾸준형',icon:'💎',xp:1200},
+  {name:'성취자',icon:'🏆',xp:2000},
+  {name:'루틴왕',icon:'👑',xp:3200},
+  {name:'갓생러',icon:'🔥',xp:5000},
+  {name:'전설',icon:'⚡',xp:8000},
+];
+const BADGES_DEF = [
+  {id:'first_day',  ic:'🌅',nm:'첫 갓생',    cond:s=>s.totalMissions>=1},
+  {id:'streak7',   ic:'🔥',nm:'7일 연속',   cond:s=>s.longestStreak>=7},
+  {id:'streak30',  ic:'🌙',nm:'30일 연속',  cond:s=>s.longestStreak>=30},
+  {id:'missions50',ic:'💪',nm:'미션 50',    cond:s=>s.totalMissions>=50},
+  {id:'xp1000',    ic:'⚡',nm:'XP 1000',   cond:s=>s.totalXP>=1000},
+  {id:'xp5000',    ic:'💎',nm:'XP 5000',   cond:s=>s.totalXP>=5000},
+  {id:'reader',    ic:'📖',nm:'독서가',     cond:s=>s.habitDone['독서 30분']>=10},
+  {id:'morning',   ic:'☀️',nm:'미라클모닝', cond:s=>s.habitDone['오전 6시 기상']>=10},
+  {id:'meditate',  ic:'🧘',nm:'마음의평화', cond:s=>s.habitDone['10분 명상']>=7},
+  {id:'perfect_wk',ic:'🎯',nm:'완벽한 주',  cond:s=>s.perfectWeeks>=1},
+  {id:'level5',    ic:'🏆',nm:'도전자 달성',cond:s=>s.level>=3},
+  {id:'level7',    ic:'👑',nm:'갓생러',     cond:s=>s.level>=6},
+];
+const DEFAULT_QUESTS = [
+  {name:'오전 6시 기상',  tags:['아침','미라클모닝'], xp:20},
+  {name:'물 2L 마시기',   tags:['신체'],             xp:20},
+  {name:'30분 유산소 운동',tags:['신체'],             xp:30},
+  {name:'독서 30분',      tags:['정신'],             xp:25},
+  {name:'영어 공부 20분', tags:['공부'],             xp:25},
+  {name:'10분 명상',      tags:['정신'],             xp:15},
+  {name:'오늘 일기 작성', tags:['정신'],             xp:15},
+];
+const TAG_CLASS = {아침:'t-am',신체:'t-bd',정신:'t-mn',공부:'t-pk',미라클모닝:'t-am',재테크:'t-pk'};
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function yesterday() {
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch { return null; }
+}
+function saveData(d) {
+  localStorage.setItem(KEY, JSON.stringify(d));
+}
+
+function initData(userName) {
+  const today = todayKey();
+  return {
+    user:    { name: userName || '나', startDate: today, hardMode: true },
+    asset:   { current: 0, goal: 100 },
+    stats:   { totalXP:0, totalMissions:0, currentStreak:0, longestStreak:0, level:0, earnedBadges:[], perfectWeeks:0, habitDone:{} },
+    daily:   {},         // {dateKey: {done:[idx...], allDone:bool}}
+    history: {},         // {dateKey: completionRate 0-100}
+  };
+}
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+let DB = null;
+let quests = [];          // [{name, tags, xp}]
+let routines = [];        // [{emoji, name, tags, xp}]
+let currentFilter = '전체';
+
+/* ═══════════════════════════════
+   BOOT
+═══════════════════════════════ */
+window.addEventListener('load', () => {
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  DB = loadData();
+  if (!DB) {
+    // First time — show onboarding
+    document.getElementById('onboard').style.display = 'flex';
+    return;
+  }
+  document.getElementById('onboard').style.display = 'none';
+  bootApp();
+});
+
+function bootApp() {
+  quests   = DB.quests   || DEFAULT_QUESTS.map(q=>({...q}));
+  routines = DB.routines || buildDefaultRoutines();
+  DB.quests   = quests;
+  DB.routines = routines;
+
+  checkDayRollover();
+  renderAll();
+  setTimeout(() => refreshProgress(), 300);
+}
+
+function checkDayRollover() {
+  const today = todayKey();
+  const yest  = yesterday();
+
+  if (!DB.daily[today]) DB.daily[today] = { done: [], allDone: false };
+
+  // Streak check: did we complete yesterday?
+  if (DB.stats.lastCheckedDate && DB.stats.lastCheckedDate !== today) {
+    const prevDone = DB.daily[yest] && DB.daily[yest].allDone;
+    if (prevDone) {
+      DB.stats.currentStreak = (DB.stats.currentStreak || 0) + 1;
+      if (DB.stats.currentStreak > (DB.stats.longestStreak || 0))
+        DB.stats.longestStreak = DB.stats.currentStreak;
+    } else {
+      // Hard mode: reset streak if yesterday not completed
+      if (DB.user.hardMode) DB.stats.currentStreak = 0;
+    }
+    // Record history completion rate
+    if (DB.daily[yest]) {
+      const rate = DB.daily[yest].done.length / quests.length * 100;
+      DB.history[yest] = Math.round(rate);
+    }
+  }
+  DB.stats.lastCheckedDate = today;
+  saveData(DB);
+}
+
+function buildDefaultRoutines() {
+  return DEFAULT_QUESTS.map(q => ({
+    emoji: ['☀️','💧','🏃','📚','🧠','🧘','✍️'][DEFAULT_QUESTS.indexOf(q)] || '⭐',
+    name: q.name, tags: q.tags, xp: q.xp, streak: 0
+  }));
+}
+
+/* ═══════════════════════════════
+   RENDER
+═══════════════════════════════ */
+function renderAll() {
+  renderHeader();
+  render66Bar();
+  renderAsset();
+  renderQuests();
+  renderRoutines();
+  renderRecord();
+  renderMe();
+}
+
+function renderHeader() {
+  const h = new Date().getHours();
+  const greet = h < 6 ? '야심한 밤이에요 🌙' : h < 11 ? '좋은 아침이에요 ☀️' : h < 14 ? '좋은 점심이에요 🍱' : h < 18 ? '좋은 오후예요 🌤' : '좋은 저녁이에요 🌙';
+  const days = ['일','월','화','수','목','금','토'];
+  const d = new Date();
+  document.getElementById('greet-txt').textContent   = greet;
+  document.getElementById('today-date').textContent  = `${d.getMonth()+1}월 ${d.getDate()}일 ${days[d.getDay()]}요일`;
+  const lv = LEVELS[DB.stats.level] || LEVELS[0];
+  document.getElementById('lv-badge-txt').textContent = `Lv.${DB.stats.level+1} ${lv.name}`;
+  // Hard mode banner
+  const hm = DB.user.hardMode;
+  document.getElementById('hb-text').textContent = hm ? '하드 모드 활성화 중' : '하드 모드 꺼짐';
+  document.getElementById('hard-banner').style.opacity = hm ? '1' : '0.5';
+  document.getElementById('hardmode-setting-nm').textContent = hm ? '하드 모드 켜짐' : '하드 모드 꺼짐';
+  document.getElementById('hardmode-setting-nm').style.color = hm ? 'var(--pink)' : 'var(--t2)';
+}
+
+function render66Bar() {
+  const start = new Date(DB.user.startDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff  = Math.floor((today - start) / 86400000) + 1;
+  const day   = Math.min(diff, 66);
+  const pct   = (day / 66 * 100).toFixed(1);
+  document.getElementById('d66-daynum').textContent  = `Day ${day} / 66일`;
+  document.getElementById('d66-fill').style.width    = pct + '%';
+  document.getElementById('d66-pct').textContent     = pct + '%';
+  document.getElementById('d66-remain').textContent  = `${Math.max(0,66-day)}일 남음`;
+}
+
+function renderAsset() {
+  const a = DB.asset;
+  const pct = a.goal > 0 ? (a.current / a.goal * 100) : 0;
+  const remain = a.goal - a.current;
+  document.getElementById('asset-goal-txt').textContent = `목표 ${a.goal}억`;
+  document.getElementById('asset-cur-num').textContent  = a.current === 0 ? '0' : a.current % 1 === 0 ? a.current : a.current.toFixed(1);
+  document.getElementById('asset-fill').style.width    = Math.min(pct,100) + '%';
+  document.getElementById('asset-pct').textContent     = pct.toFixed(1) + '%';
+  document.getElementById('asset-left').textContent    = remain > 0 ? `${remain.toFixed(1)}억 남음` : '목표 달성! 🎉';
+}
+
+function renderQuests() {
+  const today = todayKey();
+  const done  = DB.daily[today]?.done || [];
+  const list  = document.getElementById('q-list');
+  list.innerHTML = '';
+  quests.forEach((q, i) => {
+    const isDone = done.includes(i);
+    const tags = q.tags.map(t => `<span class="qtag ${TAG_CLASS[t]||'t-mn'}">${t}</span>`).join('');
+    const div = document.createElement('div');
+    div.className = 'q-item' + (isDone ? ' done' : '');
+    div.innerHTML = `<div class="q-chk">${isDone ? '✓' : ''}</div>
+      <div class="q-info"><div class="q-name">${q.name}</div><div class="q-tags">${tags}</div></div>
+      <div class="q-xp">+${q.xp}XP</div>`;
+    div.onclick = () => toggleQ(i, div);
+    list.appendChild(div);
+  });
+  refreshProgress();
+}
+
+function renderRoutines() {
+  const today  = todayKey();
+  const doneTodayIdx = DB.daily[today]?.done || [];
+  const list = document.getElementById('h-list');
+  list.innerHTML = '';
+  document.getElementById('routine-sub').textContent = `총 ${routines.length}개 습관`;
+
+  routines.forEach((r, ri) => {
+    if (currentFilter !== '전체' && !r.tags.includes(currentFilter)) return;
+    const todayDone = doneTodayIdx.includes(ri);
+    // Build 7-day dots from history
+    const dots = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if (i === 0) {
+        dots.push(`<div class="dot ${todayDone ? 'today' : ''}"></div>`);
+      } else {
+        const dayDone = DB.daily[k]?.done?.includes(ri);
+        dots.push(`<div class="dot ${dayDone ? 'ok' : ''}"></div>`);
+      }
+    }
+    const streak = r.streak || 0;
+    const tags   = r.tags.map(t=>`<span class="qtag ${TAG_CLASS[t]||'t-mn'}" style="font-size:9px">${t}</span>`).join(' ');
+    const div = document.createElement('div');
+    div.className = 'h-card';
+    div.innerHTML = `<div class="h-emoji">${r.emoji}</div>
+      <div class="h-info">
+        <div class="h-name">${r.name}</div>
+        <div class="h-streak-txt">현재 <strong>${streak}일</strong> 연속 중</div>
+        <div class="h-dots">${dots.join('')}</div>
+      </div>
+      <div class="h-right"><div class="h-xp">+${r.xp}</div><div class="h-xp-lbl">XP</div></div>`;
+    list.appendChild(div);
+  });
+}
+
+function renderRecord() {
+  const s = DB.stats;
+  const lv = LEVELS[s.level] || LEVELS[0];
+  const nextLv = LEVELS[s.level + 1];
+  const xpForThisLv = lv.xp;
+  const xpForNext   = nextLv ? nextLv.xp : lv.xp + 999999;
+  const xpInRange   = s.totalXP - xpForThisLv;
+  const xpNeeded    = xpForNext - xpForThisLv;
+  const xpPct       = Math.min(xpInRange / xpNeeded * 100, 100);
+
+  document.getElementById('rec-lv-name').textContent   = `${lv.icon} ${lv.name}`;
+  document.getElementById('rec-lv-num').textContent    = s.level + 1;
+  document.getElementById('xpbar-fill').style.width   = xpPct + '%';
+  document.getElementById('xp-cur-txt').textContent   = `${s.totalXP} XP 획득`;
+  document.getElementById('xp-nxt-txt').textContent   = nextLv ? `다음 레벨까지 ${xpForNext - s.totalXP} XP` : '최고 레벨 달성!';
+
+  document.getElementById('rec-streak').textContent  = s.currentStreak + '일';
+  document.getElementById('rec-total').textContent   = s.totalMissions;
+  document.getElementById('rec-badges').textContent  = (s.earnedBadges?.length || 0) + '개';
+
+  // Weekly completion rate
+  let weekTotal = 0, weekDone = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    weekTotal += quests.length;
+    weekDone  += (DB.daily[k]?.done?.length || 0);
+  }
+  document.getElementById('rec-week-pct').textContent = weekTotal > 0 ? Math.round(weekDone/weekTotal*100)+'%' : '0%';
+
+  // Level roadmap
+  const rm = document.getElementById('lv-roadmap');
+  rm.innerHTML = '';
+  LEVELS.forEach((l, i) => {
+    const done = i <= s.level;
+    const cur  = i === s.level;
+    const style = done
+      ? 'background:var(--gold);font-size:14px'
+      : cur
+        ? 'background:var(--s2);font-size:16px;border:2px solid var(--gold)'
+        : 'background:var(--s1);font-size:16px;border:2px solid var(--bd)';
+    rm.innerHTML += `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:50px">
+      <div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;${style}">${done && !cur ? '✓' : l.icon}</div>
+      <div style="font-size:9px;color:${done?'var(--gold)':'var(--t2)'};font-weight:700;text-align:center">${l.name}</div>
+    </div>`;
+    if (i < LEVELS.length - 1)
+      rm.innerHTML += `<div style="flex:1;height:2px;background:${i<s.level?'var(--gold)':'var(--s2)'};border-radius:1px;min-width:10px"></div>`;
+  });
+
+  // Heatmap (91 days)
+  const hmap = document.getElementById('heatmap');
+  hmap.innerHTML = '';
+  for (let i = 90; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const rate = DB.history[k] ?? (DB.daily[k] ? Math.round((DB.daily[k].done?.length||0)/quests.length*100) : null);
+    let cls = 'hcell';
+    if (rate !== null) {
+      if (rate >= 100) cls += ' h4';
+      else if (rate >= 70) cls += ' h3';
+      else if (rate >= 40) cls += ' h2';
+      else if (rate > 0)   cls += ' h1';
+    }
+    const cell = document.createElement('div');
+    cell.className = cls;
+    hmap.appendChild(cell);
+  }
+
+  // Badges
+  const bg = document.getElementById('bdg-grid');
+  bg.innerHTML = '';
+  const badgeStats = {
+    ...s,
+    habitDone: s.habitDone || {},
+    perfectWeeks: s.perfectWeeks || 0
+  };
+  BADGES_DEF.forEach(b => {
+    const earned = s.earnedBadges?.includes(b.id) || b.cond(badgeStats);
+    bg.innerHTML += `<div class="bdg"><div class="bdg-ic ${earned?'earned':'locked'}">${b.ic}</div><div class="bdg-nm">${b.nm.replace(' ','<br>')}</div></div>`;
+  });
+}
+
+function renderMe() {
+  const s = DB.stats;
+  const lv = LEVELS[s.level] || LEVELS[0];
+  const start = new Date(DB.user.startDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dayNum = Math.floor((today - start) / 86400000) + 1;
+  document.getElementById('me-name').textContent = (DB.user.name || '나') + ' ✏️';
+  document.getElementById('me-tag').textContent  = `Lv.${s.level+1} ${lv.name} · 갓생 ${dayNum}일째`;
+  document.getElementById('me-total').textContent   = s.totalMissions;
+  document.getElementById('me-streak').textContent  = s.currentStreak;
+  document.getElementById('me-badges').textContent  = s.earnedBadges?.length || 0;
+}
+
+/* ═══════════════════════════════
+   PROGRESS (오늘 탭 실시간)
+═══════════════════════════════ */
+function refreshProgress() {
+  const today  = todayKey();
+  const done   = DB.daily[today]?.done || [];
+  const n      = quests.length;
+  const d      = done.length;
+  const pct    = n > 0 ? Math.round(d / n * 100) : 0;
+  const C      = 2 * Math.PI * 72;
+  document.getElementById('ring-fill').style.strokeDashoffset = C * (1 - d/n);
+  document.getElementById('ring-pct').textContent  = pct + '%';
+  document.getElementById('ring-sub').innerHTML    = `오늘 미션 <strong>${n}개 중 ${d}개</strong> 완료`;
+  document.getElementById('stat-done').textContent = d;
+  document.getElementById('stat-streak').textContent = DB.stats.currentStreak;
+  // Today's XP
+  let todayXP = 0;
+  done.forEach(i => { todayXP += (quests[i]?.xp || 0); });
+  document.getElementById('stat-xp').textContent = todayXP;
+}
+
+/* ═══════════════════════════════
+   QUEST TOGGLE
+═══════════════════════════════ */
+function toggleQ(idx, el) {
+  const today = todayKey();
+  if (!DB.daily[today]) DB.daily[today] = { done: [], allDone: false };
+  const done = DB.daily[today].done;
+  const prevLen = done.length;
+
+  if (done.includes(idx)) {
+    DB.daily[today].done = done.filter(i => i !== idx);
+    DB.stats.totalMissions = Math.max(0, (DB.stats.totalMissions||0) - 1);
+    DB.stats.totalXP = Math.max(0, (DB.stats.totalXP||0) - (quests[idx]?.xp||0));
+    el.classList.remove('done');
+    el.querySelector('.q-chk').textContent = '';
+  } else {
+    DB.daily[today].done.push(idx);
+    DB.stats.totalMissions = (DB.stats.totalMissions||0) + 1;
+    DB.stats.totalXP = (DB.stats.totalXP||0) + (quests[idx]?.xp||0);
+    el.classList.add('done');
+    el.querySelector('.q-chk').textContent = '✓';
+    el.classList.add('newly-done');
+    setTimeout(() => el.classList.remove('newly-done'), 300);
+    // Habit done counter
+    const hd = DB.stats.habitDone || {};
+    hd[quests[idx].name] = (hd[quests[idx].name]||0) + 1;
+    DB.stats.habitDone = hd;
+  }
+
+  // All done?
+  DB.daily[today].allDone = DB.daily[today].done.length === quests.length;
+  if (DB.daily[today].allDone && prevLen < quests.length) {
+    showToast('🔥 오늘 미션 모두 완료! 갓생 인증');
+    DB.stats.perfectWeeks = (DB.stats.perfectWeeks||0); // updated weekly
+  }
+
+  // Check level up
+  const prevLv = DB.stats.level || 0;
+  recalcLevel();
+  if (DB.stats.level > prevLv) showLevelUp(DB.stats.level);
+
+  // Check badges
+  checkBadges();
+
+  saveData(DB);
+  refreshProgress();
+  renderRoutines();
+  renderRecord();
+  renderMe();
+}
+
+function recalcLevel() {
+  const xp = DB.stats.totalXP || 0;
+  let lv = 0;
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (xp >= LEVELS[i].xp) { lv = i; break; }
+  }
+  DB.stats.level = lv;
+}
+
+function checkBadges() {
+  const s = DB.stats;
+  const badgeStats = { ...s, habitDone: s.habitDone||{}, perfectWeeks: s.perfectWeeks||0 };
+  const earned = s.earnedBadges || [];
+  BADGES_DEF.forEach(b => {
+    if (!earned.includes(b.id) && b.cond(badgeStats)) {
+      earned.push(b.id);
+      showToast(`🏅 새 배지 획득: ${b.nm}`);
+    }
+  });
+  DB.stats.earnedBadges = earned;
+}
+
+/* ═══════════════════════════════
+   HARD MODE
+═══════════════════════════════ */
+function toggleHardMode() {
+  DB.user.hardMode = !DB.user.hardMode;
+  saveData(DB);
+  renderHeader();
+  showToast(DB.user.hardMode ? '🌙 하드 모드 켜짐' : '하드 모드 꺼짐');
+}
+
+/* ═══════════════════════════════
+   MODALS
+═══════════════════════════════ */
+function openModal(type) {
+  const bg = document.getElementById('modal-bg');
+  const title = document.getElementById('modal-title');
+  const body  = document.getElementById('modal-body');
+  bg.classList.add('open');
+
+  if (type === 'name') {
+    title.textContent = '이름 변경';
+    body.innerHTML = `<input class="modal-input" id="mi-name" placeholder="이름을 입력하세요" value="${DB.user.name||''}">
+      <div class="modal-row">
+        <button class="modal-btn modal-cancel" onclick="closeModal()">취소</button>
+        <button class="modal-btn modal-confirm" onclick="saveName()">저장</button>
+      </div>`;
+    setTimeout(() => document.getElementById('mi-name').focus(), 100);
+  }
+  else if (type === 'asset') {
+    title.textContent = '목표 자산 수정';
+    body.innerHTML = `<div style="margin-bottom:8px;font-size:12px;color:var(--t2)">현재 자산 (억 단위)</div>
+      <input class="modal-input" id="mi-cur" type="number" placeholder="예: 3.5" value="${DB.asset.current||''}">
+      <div style="margin:12px 0 8px;font-size:12px;color:var(--t2)">목표 자산 (억 단위)</div>
+      <input class="modal-input" id="mi-goal" type="number" placeholder="예: 100" value="${DB.asset.goal||100}">
+      <div class="modal-hint">억 단위로 입력. 예: 3억 5천 → 3.5</div>
+      <div class="modal-row">
+        <button class="modal-btn modal-cancel" onclick="closeModal()">취소</button>
+        <button class="modal-btn modal-confirm" onclick="saveAsset()">저장</button>
+      </div>`;
+  }
+  else if (type === 'addQuest') {
+    title.textContent = '미션 추가';
+    body.innerHTML = `<input class="modal-input" id="mi-qname" placeholder="미션 이름 (예: 줄넘기 100개)">
+      <div style="margin:10px 0 8px;font-size:12px;color:var(--t2)">카테고리</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+        ${['아침','신체','정신','공부'].map(t=>`<div class="chip" onclick="this.classList.toggle('on')" data-tag="${t}">${t}</div>`).join('')}
+      </div>
+      <div style="margin-bottom:8px;font-size:12px;color:var(--t2)">XP</div>
+      <input class="modal-input" id="mi-xp" type="number" placeholder="20" value="20">
+      <div class="modal-row">
+        <button class="modal-btn modal-cancel" onclick="closeModal()">취소</button>
+        <button class="modal-btn modal-confirm" onclick="saveQuest()">추가</button>
+      </div>`;
+  }
+  else if (type === 'addRoutine') {
+    title.textContent = '루틴 추가';
+    const EMOJIS = ['🏃','📚','🧘','✍️','💊','🥗','☕','🎸','🛁','🌿'];
+    body.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        ${EMOJIS.map(e=>`<div onclick="document.getElementById('mi-emoji').value='${e}';document.querySelectorAll('.em-opt').forEach(x=>x.classList.remove('on'));this.classList.add('on')" class="em-opt chip" style="font-size:20px;padding:6px 10px">${e}</div>`).join('')}
+      </div>
+      <input type="hidden" id="mi-emoji" value="🏃">
+      <input class="modal-input" id="mi-rname" placeholder="루틴 이름" style="margin-bottom:10px">
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+        ${['아침','신체','정신','공부'].map(t=>`<div class="chip" onclick="this.classList.toggle('on')" data-tag="${t}">${t}</div>`).join('')}
+      </div>
+      <input class="modal-input" id="mi-rxp" type="number" placeholder="XP (기본 20)" value="20">
+      <div class="modal-row">
+        <button class="modal-btn modal-cancel" onclick="closeModal()">취소</button>
+        <button class="modal-btn modal-confirm" onclick="saveRoutine()">추가</button>
+      </div>`;
+  }
+}
+
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function closeModalBg(e) { if (e.target === document.getElementById('modal-bg')) closeModal(); }
+
+function saveName() {
+  const v = document.getElementById('mi-name').value.trim();
+  if (!v) return;
+  DB.user.name = v; saveData(DB); closeModal();
+  renderMe(); showToast('이름이 변경됐어요');
+}
+function saveAsset() {
+  const cur  = parseFloat(document.getElementById('mi-cur').value) || 0;
+  const goal = parseFloat(document.getElementById('mi-goal').value) || 100;
+  DB.asset = { current: cur, goal: goal }; saveData(DB); closeModal();
+  renderAsset(); showToast('자산 정보가 저장됐어요 💰');
+}
+function saveQuest() {
+  const name = document.getElementById('mi-qname').value.trim();
+  if (!name) { showToast('미션 이름을 입력해주세요'); return; }
+  const tags = [...document.querySelectorAll('#modal-body .chip.on')].map(c=>c.dataset.tag).filter(Boolean);
+  const xp   = parseInt(document.getElementById('mi-xp').value) || 20;
+  quests.push({ name, tags, xp });
+  DB.quests = quests; saveData(DB); closeModal();
+  renderQuests(); showToast('미션이 추가됐어요 ✅');
+}
+function saveRoutine() {
+  const name = document.getElementById('mi-rname').value.trim();
+  if (!name) { showToast('루틴 이름을 입력해주세요'); return; }
+  const emoji = document.getElementById('mi-emoji').value;
+  const tags  = [...document.querySelectorAll('#modal-body .chip.on')].map(c=>c.dataset.tag).filter(Boolean);
+  const xp    = parseInt(document.getElementById('mi-rxp').value) || 20;
+  routines.push({ emoji, name, tags, xp, streak:0 });
+  quests.push({ name, tags, xp });
+  DB.routines = routines; DB.quests = quests; saveData(DB); closeModal();
+  renderRoutines(); renderQuests(); showToast('루틴이 추가됐어요 🎯');
+}
+
+/* ═══════════════════════════════
+   UTILS
+═══════════════════════════════ */
+function tab(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'record') renderRecord();
+  if (id === 'me')     renderMe();
+}
+
+function fc(el, filter) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  currentFilter = filter;
+  renderRoutines();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function showLevelUp(lvIdx) {
+  const lv = LEVELS[lvIdx] || LEVELS[0];
+  document.getElementById('lu-emoji').textContent = lv.icon;
+  document.getElementById('lu-title').textContent = `Lv.${lvIdx+1} 달성!`;
+  document.getElementById('lu-sub').textContent   = `"${lv.name}" 칭호를 획득했어요`;
+  document.getElementById('lu-overlay').classList.add('show');
+}
+function closeLevelUp() { document.getElementById('lu-overlay').classList.remove('show'); }
+
+function updateClock() {
+  const d = new Date();
+  const h = String(d.getHours()).padStart(2,'0');
+  const m = String(d.getMinutes()).padStart(2,'0');
+  document.getElementById('sbar-time').textContent = `${h}:${m}`;
+}
+
+function exportData() {
+  const json = JSON.stringify(DB, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `gatsaeng_backup_${todayKey()}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('📤 데이터 내보내기 완료');
+}
+
+function resetConfirm() {
+  if (confirm('⚠️ 모든 데이터가 삭제됩니다. 정말 초기화할까요?')) {
+    localStorage.removeItem(KEY);
+    location.reload();
+  }
+}
+
+/* ═══════════════════════════════
+   ONBOARDING
+═══════════════════════════════ */
+function obGo(step) {
+  document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('ob' + step).classList.add('active');
+  if (step === 4) {
+    setTimeout(() => { document.getElementById('ls2').style.opacity = '1'; }, 700);
+    setTimeout(() => { document.getElementById('ls3').style.opacity = '1'; }, 1500);
+    setTimeout(() => obGo(5), 2600);
+  }
+}
+function toggleGoal(el) { el.classList.toggle('on'); }
+function pick(el) {
+  el.closest('.ob-choices').querySelectorAll('.ob-choice').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+function startApp() {
+  const name = prompt('이름이 뭐예요? (나중에 변경 가능)') || '나';
+  DB = initData(name);
+  bootApp();
+  const ob = document.getElementById('onboard');
+  ob.classList.add('hiding');
+  setTimeout(() => { ob.style.display = 'none'; }, 460);
+}
+</script>
+</body>
+</html>
